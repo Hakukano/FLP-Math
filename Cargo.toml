@@ -1,0 +1,17 @@
+[package]
+name = "flp-math"
+version = "0.1.0"
+authors = ["Shikano Hakukaze <hakukano@flp-web.org>"]
+edition = "2021"
+description = "Math helper"
+repository = "https://github.com/Hakukano/FLP-Math"
+documentation = "https://docs.rs/flp-math"
+homepage = "https://flp-math.rs/"
+license = "MIT"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+nom = "7.1"
+num-traits = "0.2.15"
