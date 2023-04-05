@@ -222,6 +222,42 @@ pub enum Operation {
         left: Box<Operation>,
         right: Box<Operation>,
     },
+    NLogN {
+        left: f64,
+        right: f64,
+    },
+    NLogV {
+        left: f64,
+        right: Variable,
+    },
+    NLogO {
+        left: f64,
+        right: Box<Operation>,
+    },
+    VLogN {
+        left: Variable,
+        right: f64,
+    },
+    VLogV {
+        left: Variable,
+        right: Variable,
+    },
+    VLogO {
+        left: Variable,
+        right: Box<Operation>,
+    },
+    OLogN {
+        left: Box<Operation>,
+        right: f64,
+    },
+    OLogV {
+        left: Box<Operation>,
+        right: Variable,
+    },
+    OLogO {
+        left: Box<Operation>,
+        right: Box<Operation>,
+    },
 }
 
 pub fn n(input: &str) -> IResult<&str, Box<Operation>> {
@@ -592,6 +628,61 @@ bi_operation!(
     OPowO
 );
 
+bi_operation!(n_log_n, number, log, number, f64, Log, f64, NLogN);
+bi_operation!(n_log_v, number, log, variable, f64, Log, Variable, NLogV);
+bi_operation!(
+    n_log_o,
+    number,
+    log,
+    operation,
+    f64,
+    Log,
+    Box<Operation>,
+    NLogO
+);
+bi_operation!(v_log_n, variable, log, number, Variable, Log, f64, VLogN);
+bi_operation!(v_log_v, variable, log, variable, Variable, Log, Variable, VLogV);
+bi_operation!(
+    v_log_o,
+    variable,
+    log,
+    operation,
+    Variable,
+    Log,
+    Box<Operation>,
+    VLogO
+);
+bi_operation!(
+    o_log_n,
+    operation,
+    log,
+    number,
+    Box<Operation>,
+    Log,
+    f64,
+    OLogN
+);
+bi_operation!(
+    o_log_v,
+    operation,
+    log,
+    variable,
+    Box<Operation>,
+    Log,
+    Variable,
+    OLogV
+);
+bi_operation!(
+    o_log_o,
+    operation,
+    log,
+    operation,
+    Box<Operation>,
+    Log,
+    Box<Operation>,
+    OLogO
+);
+
 pub fn operation(input: &str) -> IResult<&str, Box<Operation>> {
     alt((
         n,
@@ -613,6 +704,9 @@ pub fn operation(input: &str) -> IResult<&str, Box<Operation>> {
         )),
         alt((
             n_pow_n, n_pow_v, n_pow_o, v_pow_n, v_pow_v, v_pow_o, o_pow_n, o_pow_v, o_pow_o,
+        )),
+        alt((
+            n_log_n, n_log_v, n_log_o, v_log_n, v_log_v, v_log_o, o_log_n, o_log_v, o_log_o,
         )),
     ))(input)
 }

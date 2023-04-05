@@ -21,5 +21,6 @@ operator!(Mul, mul, "*");
 operator!(Div, div, "/");
 operator!(Mod, module, "%");
 operator!(Pow, pow, "^");
+operator!(Log, log, "log");
 operator!(PLeft, p_left, "(");
 operator!(PRight, p_right, ")");

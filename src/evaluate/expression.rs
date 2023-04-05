@@ -5,8 +5,8 @@ use self::{
     operation::Operation::{self, *},
 };
 
-pub mod atom;
-pub mod operation;
+mod atom;
+mod operation;
 
 #[derive(Debug)]
 struct BinaryOperation {
@@ -31,6 +31,7 @@ enum Node {
     Div(BinaryOperation),
     Mod(BinaryOperation),
     Pow(BinaryOperation),
+    Log(BinaryOperation),
     Number(f64),
     Variable,
 }
@@ -46,8 +47,8 @@ enum Node {
 /// assert_eq!(Super::<u8, u8>::evaluate(&evaluate, 9), 6);
 /// let evaluate = Evaluate::try_from_str("(x)").unwrap();
 /// assert_eq!(Super::<u8, u8>::evaluate(&evaluate, 9), 9);
-/// let evaluate = Evaluate::try_from_str("(((2 * (x ^2))-((6/ x) +9))%80)").unwrap();
-/// assert_eq!(Super::<u8, u8>::evaluate(&evaluate, 7), 8);
+/// let evaluate = Evaluate::try_from_str("(((2 * (x ^2))-((6/ x) +(25 log 5)))%80)").unwrap();
+/// assert_eq!(Super::<u8, u8>::evaluate(&evaluate, 7), 15);
 /// ```
 #[derive(Debug)]
 pub struct Evaluate {
@@ -246,6 +247,33 @@ impl From<Operation> for Evaluate {
             OPowO { left, right } => Self {
                 node: Node::Pow(BinaryOperation::new((*left).into(), (*right).into())),
             },
+            NLogN { left, right } => Self {
+                node: Node::Log(BinaryOperation::new(left.into(), right.into())),
+            },
+            NLogV { left, right } => Self {
+                node: Node::Log(BinaryOperation::new(left.into(), right.into())),
+            },
+            NLogO { left, right } => Self {
+                node: Node::Log(BinaryOperation::new(left.into(), (*right).into())),
+            },
+            VLogN { left, right } => Self {
+                node: Node::Log(BinaryOperation::new(left.into(), right.into())),
+            },
+            VLogV { left, right } => Self {
+                node: Node::Log(BinaryOperation::new(left.into(), right.into())),
+            },
+            VLogO { left, right } => Self {
+                node: Node::Log(BinaryOperation::new(left.into(), (*right).into())),
+            },
+            OLogN { left, right } => Self {
+                node: Node::Log(BinaryOperation::new((*left).into(), right.into())),
+            },
+            OLogV { left, right } => Self {
+                node: Node::Log(BinaryOperation::new((*left).into(), right.into())),
+            },
+            OLogO { left, right } => Self {
+                node: Node::Log(BinaryOperation::new((*left).into(), (*right).into())),
+            },
         }
     }
 }
@@ -274,6 +302,8 @@ fn evaluate_recursive(variable: f64, evaluate: &Evaluate) -> f64 {
         }
         Node::Pow(node) => evaluate_recursive(variable, node.left.as_ref())
             .powf(evaluate_recursive(variable, node.right.as_ref())),
+        Node::Log(node) => evaluate_recursive(variable, node.left.as_ref())
+            .log(evaluate_recursive(variable, node.right.as_ref())),
         Node::Number(node) => *node,
         Node::Variable => variable,
     }
