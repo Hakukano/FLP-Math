@@ -1,12 +1,14 @@
 use std::fmt::Display;
 
 use num_traits::{CheckedAdd, CheckedSub, FromPrimitive};
+use serde::{Deserialize, Serialize};
 
 /// Progression
 ///
 /// # Generic
 ///
 /// - `T` - value type
+#[derive(Deserialize, Serialize)]
 pub struct Progress<T> {
     current: T,
     max: T,

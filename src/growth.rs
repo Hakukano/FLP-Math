@@ -1,5 +1,7 @@
 use std::marker::PhantomData;
 
+use serde::{Deserialize, Serialize};
+
 use super::{evaluate::Evaluate, progress::Progress};
 
 /// Growing value by level
@@ -9,6 +11,7 @@ use super::{evaluate::Evaluate, progress::Progress};
 /// - `Lvl` - Level type
 /// - `Exp` - Exp type
 /// - `Eval` - Evaluation
+#[derive(Deserialize, Serialize)]
 pub struct Growth<Lvl, Exp, Eval>
 where
     Eval: Evaluate<Lvl, Exp>,

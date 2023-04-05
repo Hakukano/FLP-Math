@@ -1,4 +1,10 @@
+use core::fmt;
+
 use num_traits::{FromPrimitive, ToPrimitive};
+use serde::{
+    de::{self, Visitor},
+    Deserialize, Deserializer, Serialize, Serializer,
+};
 
 use self::{
     atom::Variable,
@@ -278,6 +284,64 @@ impl From<Operation> for Evaluate {
     }
 }
 
+impl ToString for Evaluate {
+    fn to_string(&self) -> String {
+        match &self.node {
+            Node::Add(node) => {
+                format!(
+                    "({} + {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Sub(node) => {
+                format!(
+                    "({} - {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Mul(node) => {
+                format!(
+                    "({} * {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Div(node) => {
+                format!(
+                    "({} / {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Mod(node) => {
+                format!(
+                    "({} % {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Pow(node) => {
+                format!(
+                    "({} ^ {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Log(node) => {
+                format!(
+                    "({} log {})",
+                    node.left.as_ref().to_string(),
+                    node.right.as_ref().to_string()
+                )
+            }
+            Node::Number(node) => node.to_string(),
+            Node::Variable => "x".to_string(),
+        }
+    }
+}
+
 fn evaluate_recursive(variable: f64, evaluate: &Evaluate) -> f64 {
     match &evaluate.node {
         Node::Add(node) => {
@@ -320,5 +384,47 @@ where
             self,
         ))
         .expect("Cannot convert f64 to Y")
+    }
+}
+
+struct EvaluateVisitor;
+
+impl<'de> Visitor<'de> for EvaluateVisitor {
+    type Value = Evaluate;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a valid expression")
+    }
+
+    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Evaluate::try_from_str(v).map_err(|err| de::Error::custom(err))
+    }
+
+    fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Evaluate::try_from_str(v.as_str()).map_err(|err| de::Error::custom(err))
+    }
+}
+
+impl<'de> Deserialize<'de> for Evaluate {
+    fn deserialize<D>(deserializer: D) -> Result<Evaluate, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        deserializer.deserialize_i32(EvaluateVisitor)
+    }
+}
+
+impl Serialize for Evaluate {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(self.to_string().as_ref())
     }
 }

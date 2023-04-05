@@ -1,12 +1,14 @@
 use std::{cmp::Ordering, fmt::Display};
 
 use num_traits::{CheckedAdd, CheckedRem, CheckedSub, FromPrimitive};
+use serde::{Deserialize, Serialize};
 
 /// A wrappable bound
 ///
 /// # Generic
 ///
 /// - `T` - value type
+#[derive(Deserialize, Serialize)]
 pub struct Bound<T> {
     pub min: T,
     pub max: T,

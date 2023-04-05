@@ -1,7 +1,12 @@
 use std::{collections::HashMap, hash::Hash};
 
+use serde::{Deserialize, Serialize};
+
 /// Evaluate with x-y map.
-pub struct Evaluate<X, Y>(pub HashMap<X, Y>);
+#[derive(Deserialize, Serialize)]
+pub struct Evaluate<X, Y>(pub HashMap<X, Y>)
+where
+    X: PartialEq + Eq + Hash;
 
 impl<X, Y> super::Evaluate<X, Y> for Evaluate<X, Y>
 where
