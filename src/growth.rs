@@ -1,9 +1,19 @@
+use std::marker::PhantomData;
+
 use super::{evaluate::Evaluate, progress::Progress};
 
+/// Growing value by level
+///
+/// # Generic
+///
+/// - `Lvl` - Level type
+/// - `Exp` - Exp type
+/// - `Eval` - Evaluation
 pub struct Growth<Lvl, Exp, Eval>
 where
-    Eval: Evaluate<X = Lvl, Y = Exp>,
+    Eval: Evaluate<Lvl, Exp>,
 {
+    lvl: PhantomData<Lvl>,
     evaluation: Eval,
     progress: Progress<Exp>,
 }
@@ -13,10 +23,11 @@ macro_rules! impl_growth {
         $(
         impl<Eval> Growth<$l, $p, Eval>
         where
-            Eval: Evaluate<X = $l, Y = $p>,
+            Eval: Evaluate<$l, $p>,
         {
             pub fn new(evaluation: Eval, progress: Progress<$p>) -> Self {
                 Self {
+                    lvl: PhantomData,
                     evaluation,
                     progress,
                 }

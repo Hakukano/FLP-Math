@@ -29,7 +29,7 @@ where
     ///
     /// # Panic
     ///
-    /// If `min` is less than `max`
+    /// If `min` is larger than `max`
     pub fn new(min: T, max: T, wrap: bool) -> Self {
         if min > max {
             panic!("Invalid bound: {min} > {max}");
